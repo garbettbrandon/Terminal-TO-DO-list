@@ -1,2 +1,6 @@
 /todo_venv
 /.venv
+__pycache__/
+*.json
+*.csv
+
