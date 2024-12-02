@@ -5,16 +5,19 @@ from datetime import datetime
 
 from colorama import Fore
 
+TASKS_JSON_FILEPATH = "data/tasks.json"
+TASKS_CSV_FILEPATH = "data/tasks.csv"
+
 
 class FileHandler:
     @staticmethod
-    def save_to_json(data, filename="data/tasks.json"):
+    def save_to_json(data, filename=TASKS_JSON_FILEPATH):
         os.makedirs(os.path.dirname(filename), exist_ok=True)
         with open(filename, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=4, ensure_ascii=False)
 
     @staticmethod
-    def load_from_json(filename="data/tasks.json"):
+    def load_from_json(filename=TASKS_JSON_FILEPATH):
         try:
             with open(filename, "r", encoding="utf-8") as f:
                 return json.load(f)
@@ -22,7 +25,7 @@ class FileHandler:
             return []
 
     @staticmethod
-    def save_to_csv(data, filename="data/tasks.csv"):
+    def save_to_csv(data, filename=TASKS_CSV_FILEPATH):
         os.makedirs(os.path.dirname(filename), exist_ok=True)
         # Nos aseguramos de que los datos tengan todas las claves necesarias
         cleaned_data = []
@@ -58,7 +61,7 @@ class FileHandler:
             y evitar errores al escribir en el archivo CSV"""
 
     @staticmethod
-    def load_from_csv(filename="data/tasks.csv"):
+    def load_from_csv(filename=TASKS_CSV_FILEPATH):
         try:
             with open(filename, "r", encoding="utf-8") as f:
                 reader = csv.DictReader(f)
@@ -67,8 +70,8 @@ class FileHandler:
             return []
 
     @staticmethod
-    def convert_json_to_csv(json_file="data/tasks.json",
-                            csv_file="data/tasks.csv"):
+    def convert_json_to_csv(json_file=TASKS_JSON_FILEPATH,
+                            csv_file=TASKS_CSV_FILEPATH):
         """
         Convierte un archivo JSON a CSV
         """
@@ -77,8 +80,8 @@ class FileHandler:
         print(f"Datos convertidos de JSON a CSV en {csv_file}")
 
     @staticmethod
-    def convert_csv_to_json(csv_file="data/tasks.csv",
-                            json_file="data/tasks.json"):
+    def convert_csv_to_json(csv_file=TASKS_CSV_FILEPATH,
+                            json_file=TASKS_JSON_FILEPATH):
         """
         Convierte un archivo CSV a JSON
         """
@@ -93,7 +96,7 @@ class FileHandler:
         Prioriza la carga desde CSV si existe
         """
         # Primero, verificamos si existe un CSV
-        if os.path.exists("data/tasks.csv"):
+        if os.path.exists(TASKS_CSV_FILEPATH):
             try:
                 # Si existe CSV, lo convertimos a JSON
                 FileHandler.convert_csv_to_json()
@@ -104,6 +107,6 @@ class FileHandler:
                 FileHandler.save_to_json([])
         else:
             # Si no existe CSV, verificamos si existe JSON
-            if not os.path.exists("data/tasks.json"):
+            if not os.path.exists(TASKS_JSON_FILEPATH):
                 # Si no existe JSON, creamos uno vacío
                 FileHandler.save_to_json([])

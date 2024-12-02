@@ -24,7 +24,8 @@ def show_main_menu():
         "Añadir Tarea",
         "Listar Tareas",
         "Actualizar Tarea",
-        "Completar Tarea",
+        "Buscar por titulo",
+        "Buscar por descripcion",
         "Eliminar Tarea",
         "Salir",
     ]
@@ -39,8 +40,6 @@ def show_list_submenu():
     """Submenú para listar tareas"""
     show_menu_header("LISTAR TAREAS")
     print(Fore.GREEN + "1. Todas las Tareas")
-    print(Fore.GREEN + "2. Tareas Pendientes")
-    print(Fore.GREEN + "3. Tareas Completadas")
     print(Fore.RED + "0. Volver al Menú Principal")
     return input(Fore.YELLOW + "Seleccione una opción: ")
 

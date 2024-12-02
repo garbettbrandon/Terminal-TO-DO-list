@@ -34,7 +34,6 @@ python main.py
 - Añadir nuevas tareas
 - Listar tareas
 - Actualizar tareas existentes
-- Marcar tareas como completadas
 - Eliminar tareas
 
 ## Estructura del Proyecto
