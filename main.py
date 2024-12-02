@@ -3,92 +3,91 @@ import sys
 from colorama import Fore
 
 from src.task_manager import TaskManager
-from src.file_handler import FileHandler
-from utils.menu import (
-    show_main_menu,
-    show_list_submenu, error_message,
-    success_message
-)
-from utils.validators import validate_task_id, validate_task_title
+from utils.menu import error_message, show_main_menu, success_message
+from utils.validators import validate_task_title, validate_task_title_exists
 
 
 def add_task(task_manager):
-    title = input(Fore.GREEN + "Ingrese el título de la tarea: ")
+    title = input(f"{Fore.GREEN}Enter the task title: ")
     try:
         validated_title = validate_task_title(title)
-        description = input(Fore.GREEN + "Ingrese la descripción (opcional): ")
+        description = input(f"{Fore.GREEN}Enter task description: ")
         task_manager.add_task(validated_title, description)
-        success_message("Tarea añadida con éxito")
+        success_message("Task added successfully")
     except ValueError as e:
         error_message(str(e))
 
 
 def list_tasks(task_manager):
-    submenu_option = show_list_submenu()
-    if submenu_option == "1":
-        tasks = task_manager.list_tasks()
-    elif submenu_option == "2":
-        tasks = task_manager.list_tasks(status="Pendiente")
-    elif submenu_option == "3":
-        tasks = task_manager.list_tasks(status="Completada")
-    else:
-        return
+    tasks = task_manager.list_tasks()
 
     if not tasks:
-        error_message("No hay tareas para mostrar")
+        error_message("No tasks found")
     else:
         # display tasks
         for task in tasks:
-            print(Fore.CYAN + "ID:", task["id"])
-            print(Fore.CYAN + "Título:", task["title"])
-            print(Fore.CYAN + "Descripción:", task["description"])
-            print(Fore.CYAN + "Estado:", task["status"])
-            print(Fore.CYAN + "Fecha de Completado:", task["completed_at"])
-            print(Fore.CYAN + "Fecha de Creación:", task["created_at"])
+            print(f"{Fore.CYAN}Title:", task["title"])
+            print(f"{Fore.CYAN}Description:", task["description"])
             print("\n")
 
-        input(Fore.YELLOW + "Presione Enter para continuar...")
+        input(f"{Fore.YELLOW}Press Enter to continue...")
 
 
 def update_task(task_manager):
-    task_id = input(Fore.GREEN + "Ingrese el ID de la tarea a actualizar: ")
+    title = input(f"{Fore.GREEN}Enter the title of the task to update: ")
     try:
-        validated_id = validate_task_id(task_id, task_manager.tasks)
-        title = input(
-            Fore.GREEN + "Ingrese el título de la tarea (opcional): ")
+        validate_task_title_exists(title, task_manager.tasks)
+        new_title = input(f"{Fore.GREEN}Enter the NEW title of the task: ")
+        validate_task_title(new_title)
         description = input(
-            Fore.GREEN + "Ingrese la descripción de la tarea (opcional): "
+            f"{Fore.GREEN}Enter the NEW description of the task (optional): "
         )
-        task_manager.update_task(validated_id, title, description)
-        success_message("Tarea actualizada con éxito")
+        task_manager.update_task_by_title(title, new_title, description)
+        success_message("Task updated successfully")
     except ValueError as e:
         error_message(str(e))
 
 
 def delete_task(task_manager):
-    task_id = input(Fore.GREEN + "Ingrese el ID de la tarea a eliminar: ")
+    title = input(f"{Fore.GREEN}Enter the title of the task to delete: ")
     try:
-        validated_id = validate_task_id(task_id, task_manager.tasks)
-        task_manager.delete_task(validated_id)
-        success_message("Tarea eliminada con éxito")
+        validated_title = validate_task_title_exists(title, task_manager.tasks)
+        task_manager.delete_task(validated_title)
+        success_message("Task deleted successfully")
     except ValueError as e:
         error_message(str(e))
 
 
-def complete_task(task_manager):
-    task_id = input(Fore.GREEN + "Ingrese el ID de la tarea a completar: ")
+def search_by_title(task_manager):
+    title = input(f"{Fore.GREEN}Enter the title of the task to search: ")
     try:
-        validated_id = validate_task_id(task_id, task_manager.tasks)
-        task_manager.complete_task(validated_id)
-        success_message("Tarea completada con éxito")
+        tasks = task_manager.search_by_title(title)
+        if not tasks:
+            error_message("No tasks found with that title")
+        else:
+            for task in tasks:
+                print(f"{Fore.CYAN}Title:", task["title"])
+                print(f"{Fore.CYAN}Description:", task["description"])
+                print("\n")
+        input(f"{Fore.YELLOW}Press Enter to continue...")
     except ValueError as e:
         error_message(str(e))
 
 
-def convert_data(task_manager):
-    task_manager._save()
-    success_message("Datos convertidos con éxito")
-    input(Fore.YELLOW + "Presione Enter para continuar...")
+def search_by_description(task_manager):
+    description = input(f"{Fore.GREEN}Enter the description of the task to search: ")
+    try:
+        tasks = task_manager.search_by_description(description)
+        if not tasks:
+            error_message("No tasks found with that description")
+        else:
+            for task in tasks:
+                print(f"{Fore.CYAN}Title:", task["title"])
+                print(f"{Fore.CYAN}Description:", task["description"])
+                print("\n")
+        input(f"{Fore.YELLOW}Press Enter to continue...")
+    except ValueError as e:
+        error_message(str(e))
 
 
 def handle_error(e):
@@ -97,12 +96,6 @@ def handle_error(e):
 
 
 def main():
-
-    # Al iniciar, convertimos CSV a JSON si existe
-    try:
-        FileHandler.convert_csv_to_json()
-    except Exception as e:
-        print(Fore.YELLOW + f"Aviso: No se pudo convertir CSV a JSON - {e}")
 
     task_manager = TaskManager()
 
@@ -116,17 +109,15 @@ def main():
                 list_tasks(task_manager)
             elif option == "3":  # Actualizar tarea
                 update_task(task_manager)
-            elif option == "4":  # Completar tarea
-                complete_task(task_manager)
-            elif option == "5":  # Eliminar tarea
+            elif option == "4":  # Buscar tarea por titulo
+                search_by_title(task_manager)
+            elif option == "5":  # Buscar tarea por descripcion
+                search_by_description(task_manager)
+            elif option == "6":  # Eliminar tarea
                 delete_task(task_manager)
-            elif option == "6":  # Salir
-                # Antes de salir, guardamos en CSV
-                try:
-                    FileHandler.save_to_csv(task_manager.tasks)
-                    print(Fore.GREEN + "Datos guardados en CSV correctamente.")
-                except Exception as e:
-                    error_message(f"Error al guardar datos: {e}")
+            elif option == "7":  # Salir
+                # Antes de salir, guardamos en JSON
+                task_manager._save()
                 break
         except Exception as e:
             handle_error(e)

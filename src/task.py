@@ -1,8 +1,7 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 
 @dataclass
 class Task:
-    id: int = field(default_factory=int)
     title: str = ""
     description: str = ""

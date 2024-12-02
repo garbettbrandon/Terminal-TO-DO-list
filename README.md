@@ -18,7 +18,8 @@ Aplicación de gestión de tareas en terminal desarrollada en Python, que permit
 
 - python -m venv venv
 - source venv/bin/activate  
-# En Windows: 
+
+En Windows: 
 - venv\Scripts\activate
 
 3. Instalar dependencias

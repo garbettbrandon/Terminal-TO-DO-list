@@ -1,26 +1,19 @@
 def validate_task_title(title):
     """
-    Valida que el título de la tarea tenga entre 3 y 50 caracteres
+    Validates that the title is not empty and has between 3 and 50 characters.
     """
     if not title:
-        raise ValueError("El título no puede estar vacío")
+        raise ValueError("The title cannot be empty")
     if len(title) < 3:
-        raise ValueError("El título debe tener al menos 3 caracteres")
+        raise ValueError("The title must have at least 3 characters")
     if len(title) > 50:
-        raise ValueError("El título no puede exceder 50 caracteres")
+        raise ValueError("The title cannot have more than 50 characters")
+
     return title
 
 
-def validate_task_id(task_id, available_tasks):
-    """
-    Valida que el ID de tarea exista
-    """
-    try:
-        task_id = int(task_id)
-    except ValueError:
-        raise ValueError("El ID debe ser un número entero")
+def validate_task_title_exists(title, available_tasks):
+    if title not in [task["title"] for task in available_tasks]:
+        raise ValueError(f"No task found with the title {title}")
 
-    if task_id not in [task["id"] for task in available_tasks]:
-        raise ValueError(f"No existe una tarea con el ID {task_id}")
-
-    return task_id
+    return title
