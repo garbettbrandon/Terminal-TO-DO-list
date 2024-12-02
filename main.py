@@ -15,7 +15,7 @@ def add_task(task_manager):
         task_manager.add_task(validated_title, description)
         success_message("Task added successfully")
     except ValueError as e:
-        error_message(str(e))
+        raise ValueError(f"Error adding task: {e}")
 
 
 def list_tasks(task_manager):
